@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>New task</title>
+</head>
+<body>
+<form th:method="POST" th:action="@{/tasks}" th:object="${task}">
+  <td><label for="description">Enter descriotion task: </label></td>
+  <td><input type="text" th:field="*{description}" id="description"/></td>
+  <br/>
+  <td><label for="status">Enter status task task: </label></td>
+  <td><input type="text" th:field="*{statusTask}" id="status"/></td>
+  <br/>
+  <input type="submit" value="Create!"/>
+
+</form>
+
+</body>
+</html>

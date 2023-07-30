@@ -20,29 +20,29 @@ public class DaoPeople {
 
     }
 
-    public List<Person> showAll(){
+    public  List<Person> showAll(){
         return people;
     }
 
-    public Person getPerson(int id){
+    public  Person getPerson(int id){
         return people.stream().filter(p->p.getId()==id).findFirst().get();
 
     }
 
 
-   // public void deletePerson(int id){
-    public void deletePerson(int id){
+
+    public  void deletePerson(int id){
         people.remove(people.stream().filter(p->p.getId()==id).findFirst().get());
 
     }
 
-    public void saveNewPerson(Person person)
+    public  void saveNewPerson(Person person)
     {
         person.setId(++NUMBER_PEOPLE);
         people.add(person);
     }
 
-    public void editPerson(int id, Person personEdited){
+    public  void editPerson(int id, Person personEdited){
         Person personBeforEdited = people.stream().filter(p->p.getId()==id).findFirst().get();
         personBeforEdited.setName(personEdited.getName());
     }
