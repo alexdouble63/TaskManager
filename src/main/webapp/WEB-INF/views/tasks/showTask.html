@@ -9,10 +9,9 @@
     <br/>
     <a th:text="'Task status: '+${task.getStatusTask()}"></a>
     <br/>
-   <!-- <form th:method="GET" th:action="@{/people/editPerson/{id}(id=${person.getId()})}">
+    <form th:method="GET" th:action="@{/tasks/editTask/{id}(id=${task.getId()})}">
         <input type="submit" value="Edit"/>
     </form>
-    <br/>-->
     <form th:method="DELETE" th:action="@{/tasks/{id}(id=${task.getId()})}">
         <input type="submit" value="Delete"/>
     </form>

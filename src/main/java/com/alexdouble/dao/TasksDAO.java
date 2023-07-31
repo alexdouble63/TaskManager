@@ -32,4 +32,16 @@ public class TasksDAO {
     }
 
 
+    public void saveNewTask(Task task){
+        task.setId(++NUMBER_TASK);
+        tasks.add(task);
+    }
+
+    public void saveEditedTask(Task editedTask){
+        Task taskBeforEdit = tasks.stream().filter(p->p.getId()==editedTask.getId()).findFirst().get();
+        taskBeforEdit.setDescription(editedTask.getDescription());
+        taskBeforEdit.setStatusTask(editedTask.getStatusTask());
+    }
+
+
 }

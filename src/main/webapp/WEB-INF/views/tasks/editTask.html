@@ -2,21 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>New task</title>
+    <title>Edit task</title>
 </head>
 <body>
-<form th:method="POST" th:action="@{/tasks}" th:object="${task}">
-  <td><label for="description">Enter descriotion task: </label></td>
-  <td><input type="text" th:field="*{description}" id="description"/></td>
-  <br/>
+<form th:method="POST" th:action="@{/tasks/{id}(id=${task.getId()})}" th:object="${task}">
+    <td><label for="description">Enter descriotion task: </label></td>
+    <td><input type="text" th:field="*{description}" id="description"/></td>
+    <br/>
     <td><label for="dropDownList">Enter status task task: </label></td>
     <select class="form-control" id="dropDownList" th:field="*{statusTask}">
         <option th:each="status : ${listStatus}" th:value="${status}" th:text="${status}"></option>
     </select>
-  <br/>
-  <input type="submit" value="Create!"/>
+    <br/>
+    <input type="submit" value="Save edit"/>
 
 </form>
-
 </body>
 </html>

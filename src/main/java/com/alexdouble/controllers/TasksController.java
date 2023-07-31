@@ -1,16 +1,21 @@
 package com.alexdouble.controllers;
 
 import com.alexdouble.dao.TasksDAO;
+import com.alexdouble.models.StatusTask;
 import com.alexdouble.models.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
+import java.util.List;
+
 @Controller
 @RequestMapping("/tasks")
 public class TasksController {
     private TasksDAO tasksDAO;
+    private static List<StatusTask> listStatus = Arrays.asList(StatusTask.values());
 
     @Autowired
     public TasksController(TasksDAO tasksDAO) {
@@ -37,7 +42,32 @@ public class TasksController {
     }
 
     @GetMapping("/new")
-    public String newTask(@ModelAttribute("task")Task task){
+    public String newTask(@ModelAttribute("task")Task task, Model model){
+       // List<StatusTask> listStatus = Arrays.asList(StatusTask.values());
+        model.addAttribute("listStatus", listStatus);
         return "/tasks/new";
     }
+
+    @PostMapping()
+    public String saveNewTask(@ModelAttribute ("task") Task newTask){
+
+        tasksDAO.saveNewTask(newTask);
+
+        return "redirect:/tasks";
+    }
+
+    @GetMapping("/editTask/{id}")
+    public String editTask(@PathVariable("id") int id, Model model){
+        model.addAttribute("task", tasksDAO.getTask(id));
+        model.addAttribute("listStatus", listStatus);
+        return "/tasks/editTask";
+
+    }
+
+    @PostMapping("/{id}")
+    public String saveEditTask(@ModelAttribute("task") Task editedTask){
+        tasksDAO.saveEditedTask(editedTask);
+        return "redirect:/tasks";
+    }
+
 }
