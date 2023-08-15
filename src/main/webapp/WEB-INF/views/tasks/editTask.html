@@ -9,7 +9,7 @@
     <td><label for="description">Enter descriotion task: </label></td>
     <td><input type="text" th:field="*{description}" id="description"/></td>
     <br/>
-    <td><label for="dropDownList">Enter status task task: </label></td>
+    <td><label for="dropDownList">Enter status task: </label></td>
     <select class="form-control" id="dropDownList" th:field="*{statusTask}">
         <option th:each="status : ${listStatus}" th:value="${status}" th:text="${status}"></option>
     </select>

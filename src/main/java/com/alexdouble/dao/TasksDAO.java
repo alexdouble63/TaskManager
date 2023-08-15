@@ -1,7 +1,11 @@
 package com.alexdouble.dao;
 
+import com.alexdouble.models.Person;
 import com.alexdouble.models.StatusTask;
 import com.alexdouble.models.Task;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -10,37 +14,50 @@ import java.util.List;
 @Component
 public class TasksDAO {
 
-    private static int NUMBER_TASK = 0;
-    private static List<Task> tasks = new ArrayList<>();
+    private final JdbcTemplate jdbcTemplate;
 
-    static {
-        tasks.add(new Task(++NUMBER_TASK,"Read project", StatusTask.NOT_ASSIGND));
-        tasks.add(new Task(++NUMBER_TASK,"write project", StatusTask.NOT_ASSIGND));
-        tasks.add(new Task(++NUMBER_TASK,"Show project", StatusTask.NOT_ASSIGND));
+    @Autowired
+    public TasksDAO(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     public List<Task> getTasks() {
-        return tasks;
+        return  jdbcTemplate.query("select * from tasks", new TaskMapper());
+
     }
 
     public Task getTask(int id){
-        return tasks.stream().filter(p->p.getId()==id).findFirst().get();
+        return jdbcTemplate.query("select * from tasks where id_task=?", new Object[]{id},
+                        new TaskMapper()).stream().findFirst().orElse(null);
     }
 
     public void delete(int id){
-        tasks.remove(tasks.stream().filter(p->p.getId()==id).findFirst().get());
+        jdbcTemplate.update("delete from tasks where id_task=?",id);
+
     }
 
 
     public void saveNewTask(Task task){
-        task.setId(++NUMBER_TASK);
-        tasks.add(task);
+
+        jdbcTemplate.update("insert into tasks (id_person,description,statusTask) values (?,?,?)",null,task.getDescription(),task.getStatusTask().name());
     }
 
     public void saveEditedTask(Task editedTask){
-        Task taskBeforEdit = tasks.stream().filter(p->p.getId()==editedTask.getId()).findFirst().get();
-        taskBeforEdit.setDescription(editedTask.getDescription());
-        taskBeforEdit.setStatusTask(editedTask.getStatusTask());
+        jdbcTemplate.update("UPDATE tasks SET id_person=?, description=?, statusTask=? WHERE id_task=?", null,
+            editedTask.getDescription(), editedTask.getStatusTask().name(),editedTask.getId());
+    }
+
+    public Person getPerson(int id){
+        return jdbcTemplate.query("select people.* from tasks join people on tasks.id_person=people.id_person "+
+                "where tasks.id_task=?", new Object[]{id}, new PeopleMapper()).stream().findFirst().orElse(null);
+    }
+
+    public void assign(int id, int id_person){
+        jdbcTemplate.update("UPDATE tasks SET id_person=? WHERE id_task=?", id_person, id);
+    }
+
+    public void release(int id){
+        jdbcTemplate.update("UPDATE tasks SET id_person=? where id_task=?", null, id);
     }
 
 

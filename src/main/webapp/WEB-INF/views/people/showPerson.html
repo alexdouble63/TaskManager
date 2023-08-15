@@ -2,19 +2,43 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" >
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Person</title>
 </head>
 <body>
+    <h2 th:align="center" >Information about person</h2>
+    <br/>
+
     <a th:text="'Name: '+${person.getName()}"></a>
     <br/>
+
     <form th:method="GET" th:action="@{/people/editPerson/{id}(id=${person.getId()})}">
         <input type="submit" value="Edit"/>
     </form>
-    <br/>
     <form th:method="DELETE" th:action="@{/people/{id}(id=${person.getId()})}">
         <input type="submit" value="Delete"/>
     </form>
     <br/>
+    <hr>
+    <h2 th:align="center" >List of Tasks</h2>
+    <div th:if="${listTasks}">
+       <ul>
+            <li th:each="task : ${listTasks}">
+                <a th:href="@{/tasks/{id}(id=${task.getId()})}" th:text="${task.getDescription()}"></a>
+            </li>
+        </ul>
+    </div>
+    <div th:unless="${listTasks}">
+        <span th:align="center">No tasks</span>
+    </div>
+
+    <hr>
+    <form th:method="GET" th:action="@{/people}">
+        <input type="submit" value="People"/>
+    </form>
+    <form th:method="GET" th:action="@{/tasks}">
+        <input type="submit" value="All Tasks"/>
+    </form>
+
 
 </body>
 </html>

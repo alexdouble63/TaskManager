@@ -1,6 +1,10 @@
 package com.alexdouble.dao;
 
 import com.alexdouble.models.Person;
+import com.alexdouble.models.Task;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -9,41 +13,37 @@ import java.util.List;
 @Component
 public class DaoPeople {
 
-    private static int NUMBER_PEOPLE = 0;
-    private static List<Person> people = new ArrayList<>();
+    private final JdbcTemplate jdbcTemplate;
 
-
-    static {
-        people.add(new Person(++NUMBER_PEOPLE,"Tom"));
-        people.add(new Person(++NUMBER_PEOPLE,"Kol"));
-        people.add(new Person(++NUMBER_PEOPLE,"Bal"));
-
+    @Autowired
+    public DaoPeople(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     public  List<Person> showAll(){
-        return people;
+        return jdbcTemplate.query("SELECT * FROM people", new PeopleMapper());
     }
 
     public  Person getPerson(int id){
-        return people.stream().filter(p->p.getId()==id).findFirst().get();
-
+        return jdbcTemplate.query("SELECT * FROM people WHERE id_person=?", new Object[]{id}, new PeopleMapper()).
+                stream().findFirst().orElse(null);
     }
 
-
-
     public  void deletePerson(int id){
-        people.remove(people.stream().filter(p->p.getId()==id).findFirst().get());
-
+        jdbcTemplate.update("DELETE FROM people WHERE id_person=?",id);
     }
 
     public  void saveNewPerson(Person person)
     {
-        person.setId(++NUMBER_PEOPLE);
-        people.add(person);
+        jdbcTemplate.update("INSERT INTO people (name) VALUES (?)",person.getName());
     }
 
     public  void editPerson(int id, Person personEdited){
-        Person personBeforEdited = people.stream().filter(p->p.getId()==id).findFirst().get();
-        personBeforEdited.setName(personEdited.getName());
+        jdbcTemplate.update("UPDATE people SET name=? WHERE id_person=?", personEdited.getName(), personEdited.getId());
+    }
+
+    public List<Task> listTaskWichDoPerson(int id_person){
+        return  jdbcTemplate.query("Select * From tasks where id_person=?",
+                new Object[]{id_person}, new TaskMapper());
     }
 }

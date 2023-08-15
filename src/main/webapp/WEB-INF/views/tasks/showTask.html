@@ -5,16 +5,40 @@
     <title>Task</title>
 </head>
 <body>
+<h2 th:align="center" >Information about Task</h2>
+<br/>
     <a th:text="'Descroption task: ' +${task.getDescription()}"></a>
     <br/>
     <a th:text="'Task status: '+${task.getStatusTask()}"></a>
     <br/>
-    <form th:method="GET" th:action="@{/tasks/editTask/{id}(id=${task.getId()})}">
-        <input type="submit" value="Edit"/>
-    </form>
-    <form th:method="DELETE" th:action="@{/tasks/{id}(id=${task.getId()})}">
-        <input type="submit" value="Delete"/>
-    </form>
+<hr>
+<form th:method="GET" th:action="@{/tasks/editTask/{id}(id=${task.getId()})}">
+    <input type="submit" value="Edit"/>
+</form>
+<form th:method="DELETE" th:action="@{/tasks/{id}(id=${task.getId()})}">
+    <input type="submit" value="Delete"/>
+</form>
+    <hr/>
+
+    <div th:if="${owner}">
+        <span>Task is doing person: </span> <span th:text="${owner.getName()}">Person Name</span>
+        <form th:method="PATCH" th:action="@{/tasks/{id}/release(id=${task.getId()})}">
+            <input type="submit" value="Release Person"/>
+        </form>
+    </div>
+
+    <div th:if="${listPeople}">
+        <span>This task is free. Who is doing?</span>
+        <form th:method="PATCH" th:action="@{/tasks/{id}/assign(id=${task.getId()})}">
+            <label for="person">Choose person</label>
+            <select th:object="${person}" th:field="*{id}" id="person">
+                <option th:each="person : ${listPeople}" th:value="${person.getId()}" th:text="${person.getName()}">
+                </option>
+            </select>
+            <input type="submit" value="Assign this task"/>
+        </form>
+    </div>
+
 
 </body>
 </html>

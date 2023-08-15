@@ -5,16 +5,29 @@
     <title>All tasks</title>
 </head>
 <body>
+<h2 th:align="center" >List of tasks</h2>
+<br/>
 <ul>
   <li th:each="task : ${tasks}">
-    <a th:href="@{/tasks/{id}(id=${task.getId()})}" th:text="${task.getDescription()}"></a>
+      <a th:href="@{/tasks/{id}(id=${task.getId()})}" th:text="'Description: '+${task.getDescription()}"></a>
+      <br/>
+      <a th:text="'Status of task: '+${task.statusTask}"></a>
+
+      <hr/>
   </li>
 
 </ul>
 <br/>
 <hr/>
 
-<a href="/tasks/new">Create task</a>
+<form th:method="GET" th:action="@{/tasks/new}">
+    <input type="submit" value="Create new task"/>
+</form>
+<form th:method="GET" th:action="@{/people}">
+    <input type="submit" value="All people"/>
+</form>
+
+
 
 </body>
 </html>

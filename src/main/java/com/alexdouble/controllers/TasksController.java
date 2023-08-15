@@ -1,6 +1,8 @@
 package com.alexdouble.controllers;
 
+import com.alexdouble.dao.DaoPeople;
 import com.alexdouble.dao.TasksDAO;
+import com.alexdouble.models.Person;
 import com.alexdouble.models.StatusTask;
 import com.alexdouble.models.Task;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +17,14 @@ import java.util.List;
 @RequestMapping("/tasks")
 public class TasksController {
     private TasksDAO tasksDAO;
+    private DaoPeople daoPeople;
     private static List<StatusTask> listStatus = Arrays.asList(StatusTask.values());
 
     @Autowired
-    public TasksController(TasksDAO tasksDAO) {
+    public TasksController(TasksDAO tasksDAO, DaoPeople daoPeople)
+    {
         this.tasksDAO = tasksDAO;
+        this.daoPeople = daoPeople;
     }
 
     @GetMapping()
@@ -29,9 +34,25 @@ public class TasksController {
     }
 
     @GetMapping("/{id}")
-    public String showTask(@PathVariable("id") int id, Model model){
+    public String showTask(@PathVariable("id") int id, Model model, @ModelAttribute("person") Person person){
+
         model.addAttribute("task", tasksDAO.getTask(id));
+        Person personForView = tasksDAO.getPerson(id);
+        if (personForView!=null) model.addAttribute("owner", personForView);
+        else model.addAttribute("listPeople", daoPeople.showAll());
         return "/tasks/showTask";
+    }
+
+    @PatchMapping("/{id}/assign")
+    public String assignTask(@PathVariable("id") int id, @ModelAttribute("person") Person person){
+        tasksDAO.assign(id, person.getId());
+        return "redirect:/tasks/"+id;
+    }
+
+    @PatchMapping("/{id}/release")
+    public String release(@PathVariable("id") int id){
+        tasksDAO.release(id);
+        return "redirect:/tasks/"+id;
     }
 
     @DeleteMapping("/{id}")
@@ -60,6 +81,7 @@ public class TasksController {
     public String editTask(@PathVariable("id") int id, Model model){
         model.addAttribute("task", tasksDAO.getTask(id));
         model.addAttribute("listStatus", listStatus);
+        model.addAttribute("listPerson", daoPeople.showAll());
         return "/tasks/editTask";
 
     }

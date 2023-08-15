@@ -3,21 +3,28 @@
 
 <head>
   <meta charset="ISO-8859-1">
-  <title>My app</title>
+  <title>List of person</title>
 </head>
 
 <body>
-
+<h2 th:align="center" >List of person</h2>
+<br/>
 <ul>
   <li th:each="person : ${people}">
     <a th:href="@{/people/{id}(id=${person.getId()})}" th:text="${person.getName()}"></a>
-  </li>
 
+  </li>
 </ul>
 <br/>
 <hr/>
 
-<a href="/people/new">Create new person</a>
+<form th:method="GET" th:action="@{/people/new}">
+  <input type="submit" value="Create new person"/>
+</form>
+<form th:method="GET" th:action="@{/tasks}">
+  <input type="submit" value="All Tasks"/>
+</form>
+
 
 </body>
 

@@ -1,5 +1,6 @@
 package com.alexdouble.controllers;
 
+import com.alexdouble.dao.TasksDAO;
 import com.alexdouble.models.Person;
 import com.alexdouble.dao.DaoPeople;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +11,12 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class PeopleController {
     private DaoPeople daoPeople;
+    private TasksDAO tasksDAO;
 
-   @Autowired
-    public PeopleController(DaoPeople daoPeople) {
+    @Autowired
+    public PeopleController(DaoPeople daoPeople, TasksDAO tasksDAO) {
         this.daoPeople = daoPeople;
+        this.tasksDAO = tasksDAO;
     }
 
     @GetMapping("/people")
@@ -25,6 +28,7 @@ public class PeopleController {
     @GetMapping ("/people/{id}")
     public String showPerson(@PathVariable("id") int id, Model model){
        model.addAttribute("person", daoPeople.getPerson(id));
+       model.addAttribute("listTasks", daoPeople.listTaskWichDoPerson(id));
        return "people/showPerson";
     }
 
